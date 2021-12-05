@@ -1,4 +1,4 @@
-import { useLocalStorageState } from "./../utils/utils";
+import {useLocalStorageState} from './../utils/utils';
 import {
   Keypair,
   clusterApiUrl,
@@ -6,40 +6,40 @@ import {
   PublicKey,
   Transaction,
   TransactionInstruction,
-} from "@solana/web3.js";
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { notify } from "./../utils/notifications";
-import { ExplorerLink } from "../components/ExplorerLink";
-import { setProgramIds } from "../utils/ids";
-import { cache, getMultipleAccounts, MintParser } from "./accounts";
-import { TokenListProvider, ENV as ChainID, TokenInfo } from "@solana/spl-token-registry";
-import { WalletAdapter } from "@solana/wallet-adapter-base";
+} from '@solana/web3.js';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
+import {notify} from './../utils/notifications';
+import {ExplorerLink} from '../components/ExplorerLink';
+import {setProgramIds} from '../utils/ids';
+import {cache, getMultipleAccounts, MintParser} from './accounts';
+import {
+  TokenListProvider,
+  ENV as ChainID,
+  TokenInfo,
+} from '@solana/spl-token-registry';
+import {WalletAdapter} from '@solana/wallet-adapter-base';
 
-export type ENV =
-  | "mainnet-beta"
-  | "testnet"
-  | "devnet"
-  | "localnet";
+export type ENV = 'mainnet-beta' | 'testnet' | 'devnet' | 'localnet';
 
 export const ENDPOINTS = [
   {
-    name: "mainnet-beta" as ENV,
-    endpoint: "https://solana-api.projectserum.com/",
+    name: 'mainnet-beta' as ENV,
+    endpoint: 'https://solana-api.projectserum.com/',
     chainID: ChainID.MainnetBeta,
   },
   {
-    name: "testnet" as ENV,
-    endpoint: clusterApiUrl("testnet"),
+    name: 'testnet' as ENV,
+    endpoint: clusterApiUrl('testnet'),
     chainID: ChainID.Testnet,
   },
   {
-    name: "devnet" as ENV,
-    endpoint: clusterApiUrl("devnet"),
+    name: 'devnet' as ENV,
+    endpoint: clusterApiUrl('devnet'),
     chainID: ChainID.Devnet,
   },
   {
-    name: "localnet" as ENV,
-    endpoint: "http://127.0.0.1:8899",
+    name: 'localnet' as ENV,
+    endpoint: 'http://127.0.0.1:8899',
     chainID: ChainID.Devnet,
   },
 ];
@@ -64,28 +64,28 @@ const ConnectionContext = React.createContext<ConnectionConfig>({
   setEndpoint: () => {},
   slippage: DEFAULT_SLIPPAGE,
   setSlippage: (val: number) => {},
-  connection: new Connection(DEFAULT, "recent"),
-  sendConnection: new Connection(DEFAULT, "recent"),
+  connection: new Connection(DEFAULT, 'recent'),
+  sendConnection: new Connection(DEFAULT, 'recent'),
   env: ENDPOINTS[0].name,
   tokens: [],
   tokenMap: new Map<string, TokenInfo>(),
 });
 
-export function ConnectionProvider({ children = undefined as any }) {
+export function ConnectionProvider({children = undefined as any}) {
   const [endpoint, setEndpoint] = useLocalStorageState(
-    "connectionEndpts",
-    ENDPOINTS[0].endpoint
+    'connectionEndpts',
+    ENDPOINTS[0].endpoint,
   );
 
   const [slippage, setSlippage] = useLocalStorageState(
-    "slippage",
-    DEFAULT_SLIPPAGE.toString()
+    'slippage',
+    DEFAULT_SLIPPAGE.toString(),
   );
 
-  const connection = useMemo(() => new Connection(endpoint, "recent"), [
+  const connection = useMemo(() => new Connection(endpoint, 'recent'), [
     endpoint,
   ]);
-  const sendConnection = useMemo(() => new Connection(endpoint, "recent"), [
+  const sendConnection = useMemo(() => new Connection(endpoint, 'recent'), [
     endpoint,
   ]);
 
@@ -102,22 +102,26 @@ export function ConnectionProvider({ children = undefined as any }) {
       const res = await new TokenListProvider().resolve();
       const list = res
         .filterByChainId(chain.chainID)
-        .excludeByTag("nft")
+        .excludeByTag('nft')
         .getList();
       const knownMints = list.reduce((map, item) => {
-        map.set(item.address, item);
+        map.set(item.address.trim(), item);
         return map;
       }, new Map<string, TokenInfo>());
 
-      const accounts = await getMultipleAccounts(connection, [...knownMints.keys()], 'single');
+      const accounts = await getMultipleAccounts(
+        connection,
+        [...knownMints.keys()],
+        'single',
+      );
       accounts.keys.forEach((key, index) => {
         const account = accounts.array[index];
-        if(!account) {
+        if (!account) {
           return;
         }
 
         cache.add(new PublicKey(key), account, MintParser);
-      })
+      });
 
       setTokenMap(knownMints);
       setTokens(list);
@@ -146,7 +150,7 @@ export function ConnectionProvider({ children = undefined as any }) {
   useEffect(() => {
     const id = sendConnection.onAccountChange(
       new Keypair().publicKey,
-      () => {}
+      () => {},
     );
     return () => {
       sendConnection.removeAccountChangeListener(id);
@@ -199,13 +203,13 @@ export function useConnectionConfig() {
 }
 
 export function useSlippageConfig() {
-  const { slippage, setSlippage } = useContext(ConnectionContext);
-  return { slippage, setSlippage };
+  const {slippage, setSlippage} = useContext(ConnectionContext);
+  return {slippage, setSlippage};
 }
 
 const getErrorForTransaction = async (connection: Connection, txid: string) => {
   // wait for all confirmation before geting transaction
-  await connection.confirmTransaction(txid, "max");
+  await connection.confirmTransaction(txid, 'max');
 
   const tx = await connection.getParsedConfirmedTransaction(txid);
 
@@ -235,21 +239,21 @@ export const sendTransaction = async (
   wallet: WalletAdapter,
   instructions: TransactionInstruction[],
   signers: Keypair[],
-  awaitConfirmation = true
+  awaitConfirmation = true,
 ) => {
   if (!wallet?.publicKey) {
-    throw new Error("Wallet is not connected");
+    throw new Error('Wallet is not connected');
   }
 
   let transaction = new Transaction();
   instructions.forEach((instruction) => transaction.add(instruction));
   transaction.recentBlockhash = (
-    await connection.getRecentBlockhash("max")
+    await connection.getRecentBlockhash('max')
   ).blockhash;
   transaction.setSigners(
     // fee payied by the wallet owner
     wallet.publicKey,
-    ...signers.map((s) => s.publicKey)
+    ...signers.map((s) => s.publicKey),
   );
   if (signers.length > 0) {
     transaction.partialSign(...signers);
@@ -258,7 +262,7 @@ export const sendTransaction = async (
   const rawTransaction = transaction.serialize();
   let options = {
     skipPreflight: true,
-    commitment: "singleGossip",
+    commitment: 'singleGossip',
   };
 
   const txid = await connection.sendRawTransaction(rawTransaction, options);
@@ -267,14 +271,14 @@ export const sendTransaction = async (
     const status = (
       await connection.confirmTransaction(
         txid,
-        options && (options.commitment as any)
+        options && (options.commitment as any),
       )
     ).value;
 
     if (status?.err) {
       const errors = await getErrorForTransaction(connection, txid);
       notify({
-        message: "Transaction failed...",
+        message: 'Transaction failed...',
         description: (
           <>
             {errors.map((err) => (
@@ -283,11 +287,11 @@ export const sendTransaction = async (
             <ExplorerLink address={txid} type="transaction" />
           </>
         ),
-        type: "error",
+        type: 'error',
       });
 
       throw new Error(
-        `Raw transaction ${txid} failed (${JSON.stringify(status)})`
+        `Raw transaction ${txid} failed (${JSON.stringify(status)})`,
       );
     }
   }

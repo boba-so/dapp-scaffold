@@ -1,9 +1,9 @@
-import { useWalletModal } from "@solana/wallet-adapter-ant-design";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { Button, Dropdown, Menu } from "antd";
-import { ButtonProps } from "antd/lib/button";
-import React, { useCallback } from "react";
-import { LABELS } from "../../constants";
+import {useWalletModal} from '@solana/wallet-adapter-ant-design';
+import {useWallet} from '@solana/wallet-adapter-react';
+import {Button, Dropdown, Menu} from 'antd';
+import {ButtonProps} from 'antd/lib/button';
+import React, {useCallback} from 'react';
+import {LABELS} from '../../constants';
 
 export interface ConnectButtonProps
   extends ButtonProps,
@@ -12,10 +12,10 @@ export interface ConnectButtonProps
 }
 
 export const ConnectButton = (props: ConnectButtonProps) => {
-  const { setVisible } = useWalletModal();
+  const {setVisible} = useWalletModal();
 
-  const { connected, connect, select, wallet, wallets } = useWallet();
-  const { onClick, children, disabled, allowWalletChange, ...rest } = props;
+  const {connected, connect, select, wallet, wallets} = useWallet();
+  const {onClick, children, disabled, allowWalletChange, ...rest} = props;
 
   const handleChangeWalletButtonClick: React.MouseEventHandler<HTMLElement> = useCallback(
     (event) => {
@@ -25,7 +25,7 @@ export const ConnectButton = (props: ConnectButtonProps) => {
       }
       setVisible(true);
     },
-    [setVisible, onClick, connected]
+    [setVisible, onClick, connected],
   );
 
   // only show if wallet selected or user connected

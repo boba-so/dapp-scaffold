@@ -1,8 +1,8 @@
-import { Identicon } from "../Identicon";
-import React from "react";
-import { getTokenIcon } from "../../utils/utils";
-import { useConnectionConfig } from "../../contexts/connection";
-import { PublicKey } from "@solana/web3.js";
+import {Identicon} from '../Identicon';
+import React from 'react';
+import {getTokenIcon} from '../../utils/utils';
+import {useConnectionConfig} from '../../contexts/connection';
+import {PublicKey} from '@solana/web3.js';
 
 export const TokenIcon = (props: {
   mintAddress?: string | PublicKey;
@@ -10,7 +10,7 @@ export const TokenIcon = (props: {
   size?: number;
   className?: string;
 }) => {
-  const { tokenMap } = useConnectionConfig();
+  const {tokenMap} = useConnectionConfig();
   const icon = getTokenIcon(tokenMap, props.mintAddress);
 
   const size = props.size || 20;
@@ -25,11 +25,11 @@ export const TokenIcon = (props: {
         height={props.style?.height || size.toString()}
         src={icon}
         style={{
-          marginRight: "0.5rem",
-          marginTop: "0.11rem",
-          borderRadius: "10rem",
-          backgroundColor: "white",
-          backgroundClip: "padding-box",
+          marginRight: '0.5rem',
+          marginTop: '0.11rem',
+          borderRadius: '10rem',
+          backgroundColor: 'white',
+          backgroundClip: 'padding-box',
           ...props.style,
         }}
       />
@@ -40,7 +40,7 @@ export const TokenIcon = (props: {
     <Identicon
       address={props.mintAddress}
       style={{
-        marginRight: "0.5rem",
+        marginRight: '0.5rem',
         width: size,
         height: size,
         marginTop: 2,
@@ -57,10 +57,10 @@ export const PoolIcon = (props: {
   className?: string;
 }) => {
   return (
-    <div className={props.className} style={{ display: "flex" }}>
+    <div className={props.className} style={{display: 'flex'}}>
       <TokenIcon
         mintAddress={props.mintA}
-        style={{ marginRight: "-0.5rem", ...props.style }}
+        style={{marginRight: '-0.5rem', ...props.style}}
       />
       <TokenIcon mintAddress={props.mintB} />
     </div>

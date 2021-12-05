@@ -1,15 +1,15 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { MINT_TO_MARKET } from "./../models/marketOverrides";
-import { STABLE_COINS } from "./../utils/utils";
-import { useConnectionConfig } from "./connection";
-import { cache, getMultipleAccounts } from "./accounts";
-import { Market, MARKETS, Orderbook, TOKEN_MINTS } from "@project-serum/serum";
-import { AccountInfo, Connection, PublicKey } from "@solana/web3.js";
-import { useMemo } from "react";
-import { EventEmitter } from "./../utils/eventEmitter";
+import React, {useCallback, useContext, useEffect, useState} from 'react';
+import {MINT_TO_MARKET} from './../models/marketOverrides';
+import {STABLE_COINS} from './../utils/utils';
+import {useConnectionConfig} from './connection';
+import {cache, getMultipleAccounts} from './accounts';
+import {Market, MARKETS, Orderbook, TOKEN_MINTS} from '@project-serum/serum';
+import {AccountInfo, Connection, PublicKey} from '@solana/web3.js';
+import {useMemo} from 'react';
+import {EventEmitter} from './../utils/eventEmitter';
 
-import { DexMarketParser } from "./../models/dex";
-import { useUserAccounts } from "../hooks";
+import {DexMarketParser} from './../models/dex';
+import {useUserAccounts} from '../hooks';
 
 export const BONFIDA_POOL_INTERVAL = 30 * 60_000; // 30 min
 
@@ -35,13 +35,13 @@ const MarketsContext = React.createContext<MarketsContextState | null>(null);
 
 const marketEmitter = new EventEmitter();
 
-export function MarketProvider({ children = null as any }) {
-  const { endpoint } = useConnectionConfig();
+export function MarketProvider({children = null as any}) {
+  const {endpoint} = useConnectionConfig();
   const accountsToObserve = useMemo(() => new Map<string, number>(), []);
   const [marketMints, setMarketMints] = useState<string[]>([]);
-  const { userAccounts } = useUserAccounts();
+  const {userAccounts} = useUserAccounts();
 
-  const connection = useMemo(() => new Connection(endpoint, "recent"), [
+  const connection = useMemo(() => new Connection(endpoint, 'recent'), [
     endpoint,
   ]);
 
@@ -50,14 +50,15 @@ export function MarketProvider({ children = null as any }) {
       const mintAddress = key;
 
       const SERUM_TOKEN = TOKEN_MINTS.find(
-        (a) => a.address.toBase58() === mintAddress
+        (a) => a.address.toBase58() === mintAddress,
       );
 
       const marketAddress = MINT_TO_MARKET[mintAddress];
-      const marketInfo = MARKETS.filter(m => !m.deprecated).find(
-        (m) => m.name === `${SERUM_TOKEN?.name}/USDC` || 
-               m.name === `${SERUM_TOKEN?.name}/USDT` || 
-               m.address.toBase58() === marketAddress
+      const marketInfo = MARKETS.filter((m) => !m.deprecated).find(
+        (m) =>
+          m.name === `${SERUM_TOKEN?.name}/USDC` ||
+          m.name === `${SERUM_TOKEN?.name}/USDT` ||
+          m.address.toBase58() === marketAddress,
       );
 
       if (marketInfo) {
@@ -97,8 +98,8 @@ export function MarketProvider({ children = null as any }) {
         connection,
         // only query for markets that are not in cahce
         allMarkets.filter((a) => cache.get(a) === undefined),
-        "single"
-      ).then(({ keys, array }) => {
+        'single',
+      ).then(({keys, array}) => {
         allMarkets.forEach(() => {});
 
         return array.map((item, index) => {
@@ -157,16 +158,16 @@ export function MarketProvider({ children = null as any }) {
     (mintAddress: string) => {
       return getMidPrice(
         marketByMint.get(mintAddress)?.marketInfo.address.toBase58(),
-        mintAddress
+        mintAddress,
       );
     },
-    [marketByMint]
+    [marketByMint],
   );
 
   const subscribeToMarket = useCallback(
     (mintAddress: string) => {
       const info = marketByMint.get(mintAddress);
-      const market = cache.get(info?.marketInfo.address.toBase58() || "");
+      const market = cache.get(info?.marketInfo.address.toBase58() || '');
       if (!market) {
         return () => {};
       }
@@ -192,7 +193,7 @@ export function MarketProvider({ children = null as any }) {
         });
       };
     },
-    [marketByMint, accountsToObserve]
+    [marketByMint, accountsToObserve],
   );
 
   const precacheMarkets = useCallback(
@@ -203,11 +204,11 @@ export function MarketProvider({ children = null as any }) {
         setMarketMints(newMints);
       }
     },
-    [setMarketMints, marketMints]
+    [setMarketMints, marketMints],
   );
 
   useEffect(() => {
-    precacheMarkets(userAccounts.map(a => a.info.mint.toBase58()));
+    precacheMarkets(userAccounts.map((a) => a.info.mint.toBase58()));
   }, [userAccounts, precacheMarkets]);
 
   return (
@@ -232,8 +233,8 @@ export const useMarkets = () => {
 };
 
 export const useMidPriceInUSD = (mint: string) => {
-  const { midPriceInUSD, subscribeToMarket, marketEmitter } = useContext(
-    MarketsContext
+  const {midPriceInUSD, subscribeToMarket, marketEmitter} = useContext(
+    MarketsContext,
   ) as MarketsContextState;
   const [price, setPrice] = useState<number>(0);
 
@@ -254,7 +255,7 @@ export const useMidPriceInUSD = (mint: string) => {
     };
   }, [midPriceInUSD, mint, marketEmitter, subscribeToMarket]);
 
-  return { price, isBase: price === 1.0 };
+  return {price, isBase: price === 1.0};
 };
 
 export const usePrecacheMarket = () => {
@@ -275,10 +276,10 @@ const bbo = (bidsBook: Orderbook, asksBook: Orderbook) => {
 
 const getMidPrice = (marketAddress?: string, mintAddress?: string) => {
   const SERUM_TOKEN = TOKEN_MINTS.find(
-    (a) => a.address.toBase58() === mintAddress
+    (a) => a.address.toBase58() === mintAddress,
   );
 
-  if (STABLE_COINS.has(SERUM_TOKEN?.name || "")) {
+  if (STABLE_COINS.has(SERUM_TOKEN?.name || '')) {
     return 1.0;
   }
 
@@ -303,7 +304,7 @@ const getMidPrice = (marketAddress?: string, mintAddress?: string) => {
     baseMintDecimals,
     quoteMintDecimals,
     undefined,
-    decodedMarket.programId
+    decodedMarket.programId,
   );
 
   const bids = cache.get(decodedMarket.bids)?.info;
@@ -324,13 +325,13 @@ const refreshAccounts = async (connection: Connection, keys: string[]) => {
     return [];
   }
 
-  return getMultipleAccounts(connection, keys, "single").then(
-    ({ keys, array }) => {
+  return getMultipleAccounts(connection, keys, 'single').then(
+    ({keys, array}) => {
       return array.map((item, index) => {
         const address = keys[index];
         return cache.add(new PublicKey(address), item);
       });
-    }
+    },
   );
 };
 

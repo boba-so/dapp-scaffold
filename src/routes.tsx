@@ -1,12 +1,12 @@
-import { HashRouter, Route, Switch } from "react-router-dom";
-import React, { useMemo } from "react";
-import { WalletProvider } from "@solana/wallet-adapter-react";
-import { ConnectionProvider } from "./contexts/connection";
-import { AccountsProvider } from "./contexts/accounts";
-import { MarketProvider } from "./contexts/market";
-import { AppLayout } from "./components/Layout";
+import {HashRouter, Route, Switch} from 'react-router-dom';
+import React, {useMemo} from 'react';
+import {WalletProvider} from '@solana/wallet-adapter-react';
+import {ConnectionProvider} from './contexts/connection';
+import {AccountsProvider} from './contexts/accounts';
+import {MarketProvider} from './contexts/market';
+import {AppLayout} from './components/Layout';
 
-import { FaucetView, HomeView } from "./views";
+import {FaucetView, HomeView} from './views';
 import {
   getLedgerWallet,
   getMathWallet,
@@ -15,7 +15,7 @@ import {
   getSolletWallet,
   getSolongWallet,
   getTorusWallet,
-} from "@solana/wallet-adapter-wallets";
+} from '@solana/wallet-adapter-wallets';
 
 export function Routes() {
   const wallets = useMemo(
@@ -26,7 +26,7 @@ export function Routes() {
         options: {
           // TODO: Get your own tor.us wallet client Id
           clientId:
-            "BOM5Cl7PXgE9Ylq1Z1tqzhpydY0RVr8k90QQ85N7AKI5QGSrr9iDC-3rvmy0K_hF0JfpLMiXoDhta68JwcxS1LQ",
+            'BOM5Cl7PXgE9Ylq1Z1tqzhpydY0RVr8k90QQ85N7AKI5QGSrr9iDC-3rvmy0K_hF0JfpLMiXoDhta68JwcxS1LQ',
         },
       }),
       getLedgerWallet(),
@@ -34,13 +34,13 @@ export function Routes() {
       getMathWallet(),
       getSolletWallet(),
     ],
-    []
+    [],
   );
 
   return (
-    <HashRouter basename={"/"}>
+    <HashRouter basename={'/'}>
       <ConnectionProvider>
-        <WalletProvider wallets={wallets} autoConnect>
+        <WalletProvider wallets={wallets}>
           <AccountsProvider>
             <MarketProvider>
               <AppLayout>

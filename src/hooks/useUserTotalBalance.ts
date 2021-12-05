@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import { cache } from "../contexts/accounts";
-import { useMarkets } from "../contexts/market";
-import { fromLamports } from "../utils/utils";
-import { useUserAccounts } from "./useUserAccounts";
+import {useEffect, useState} from 'react';
+import {cache} from '../contexts/accounts';
+import {useMarkets} from '../contexts/market';
+import {fromLamports} from '../utils/utils';
+import {useUserAccounts} from './useUserAccounts';
 
 export function useUserTotalBalance() {
-  const { userAccounts } = useUserAccounts();
+  const {userAccounts} = useUserAccounts();
   const [balanceInUSD, setBalanceInUSD] = useState(0);
-  const { marketEmitter, midPriceInUSD } = useMarkets();
+  const {marketEmitter, midPriceInUSD} = useMarkets();
 
   useEffect(() => {
     const updateBalance = () => {
@@ -17,11 +17,13 @@ export function useUserTotalBalance() {
         const mintAddress = account.info.mint.toBase58();
         const mint = cache.get(mintAddress);
         if (mint) {
-          const balance = fromLamports(account.info.amount.toNumber(), mint.info);
+          const balance = fromLamports(
+            account.info.amount.toNumber(),
+            mint.info,
+          );
           total += balance * midPriceInUSD(mintAddress);
         }
       }
-
 
       setBalanceInUSD(total);
     };

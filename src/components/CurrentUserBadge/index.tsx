@@ -1,13 +1,13 @@
-import React from "react";
-import { formatNumber, shortenAddress } from "../../utils/utils";
-import { Identicon } from "../Identicon";
-import { useNativeAccount } from "../../contexts/accounts";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { useWallet } from "@solana/wallet-adapter-react";
+import React from 'react';
+import {formatNumber, shortenAddress} from '../../utils/utils';
+import {Identicon} from '../Identicon';
+import {useNativeAccount} from '../../contexts/accounts';
+import {LAMPORTS_PER_SOL} from '@solana/web3.js';
+import {useWallet} from '@solana/wallet-adapter-react';
 
 export const CurrentUserBadge = () => {
-  const { publicKey } = useWallet();
-  const { account } = useNativeAccount();
+  const {publicKey} = useWallet();
+  const {account} = useNativeAccount();
 
   if (!publicKey) {
     return null;
@@ -24,7 +24,7 @@ export const CurrentUserBadge = () => {
         {shortenAddress(`${publicKey}`)}
         <Identicon
           address={publicKey.toBase58()}
-          style={{ marginLeft: "0.5rem", display: "flex" }}
+          style={{marginLeft: '0.5rem', display: 'flex'}}
         />
       </div>
     </div>

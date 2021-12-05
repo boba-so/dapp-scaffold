@@ -1,15 +1,15 @@
-import React from "react";
-import "./../../App.less";
-import { Layout } from "antd";
-import { Link } from "react-router-dom";
-import { WalletModalProvider } from "@solana/wallet-adapter-ant-design";
+import React from 'react';
+import './../../App.less';
+import {Layout} from 'antd';
+import {Link} from 'react-router-dom';
+import {WalletModalProvider} from '@solana/wallet-adapter-ant-design';
 
-import { LABELS } from "../../constants";
-import { AppBar } from "../AppBar";
+import {LABELS} from '../../constants';
+import {AppBar} from '../AppBar';
 
-const { Header, Content } = Layout;
+const {Header, Content} = Layout;
 
-export const AppLayout = React.memo(({ children }) => {
+export const AppLayout = React.memo(({children}) => {
   return (
     <WalletModalProvider>
       <div className="App wormhole-bg">
@@ -17,12 +17,12 @@ export const AppLayout = React.memo(({ children }) => {
           <Header className="App-Bar">
             <Link to="/">
               <div className="app-title">
-                <h2>Solana DAPP</h2>
+                <h2>BOBA DApp</h2>
               </div>
             </Link>
             <AppBar />
           </Header>
-          <Content style={{ padding: "0 50px" }}>{children}</Content>
+          <Content style={{padding: '0 50px'}}>{children}</Content>
         </Layout>
       </div>
     </WalletModalProvider>

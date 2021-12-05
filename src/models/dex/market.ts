@@ -1,10 +1,6 @@
-import { Market, MARKETS, Orderbook } from "@project-serum/serum";
-import { AccountInfo, PublicKey } from "@solana/web3.js";
-import {
-  MintParser,
-  ParsedAccountBase,
-  cache,
-} from "./../../contexts/accounts";
+import {Market, MARKETS, Orderbook} from '@project-serum/serum';
+import {AccountInfo, PublicKey} from '@solana/web3.js';
+import {MintParser, ParsedAccountBase, cache} from './../../contexts/accounts';
 
 export const OrderBookParser = (id: PublicKey, acc: AccountInfo<Buffer>) => {
   const decoded = Orderbook.LAYOUT.decode(acc.data);
@@ -21,16 +17,16 @@ export const OrderBookParser = (id: PublicKey, acc: AccountInfo<Buffer>) => {
 };
 
 const DEFAULT_DEX_ID = new PublicKey(
-  "EUqojwWA2rd19FZrzeBncJsm38Jm1hEhE3zsmX3bRc2o"
+  'EUqojwWA2rd19FZrzeBncJsm38Jm1hEhE3zsmX3bRc2o',
 );
 
 export const DexMarketParser = (
   pubkey: PublicKey,
-  acc: AccountInfo<Buffer>
+  acc: AccountInfo<Buffer>,
 ) => {
   const market = MARKETS.find((m) => m.address.equals(pubkey));
   const decoded = Market.getLayout(market?.programId || DEFAULT_DEX_ID).decode(
-    acc.data
+    acc.data,
   );
 
   const details = {
